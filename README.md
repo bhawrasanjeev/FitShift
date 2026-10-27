@@ -67,10 +67,20 @@ src/
 │   │   └── RecoveryView.tsx         # Sleep, hydration, desk posture & mobility advice
 │   ├── schedule/
 │   │   └── DailyScheduleView.tsx    # 24-hour chronological timeline
-│   └── overview/
-│       ├── OverviewTab.tsx          # Plan welcome, today's workout/meals, late button
-│       ├── LateTiredModal.tsx       # 15m gentle recovery routine activator
-│       └── EditPlanModal.tsx        # Fast settings editor to reconfigure plan
+│   ├── overview/
+│   │   ├── OverviewTab.tsx          # Plan welcome, today's workout/meals, late button
+│   │   ├── LateTiredModal.tsx       # 15m gentle recovery routine activator
+│   │   └── EditPlanModal.tsx        # Fast settings editor to reconfigure plan
+│   └── ai/
+│       ├── AIAssistantPage.tsx      # Main AI Assistant page & conversation container
+│       ├── ChatMessage.tsx          # User/Assistant bubbles, markdown parsing, copy action
+│       ├── ChatInput.tsx            # Auto-resizing message input & clear chat trigger
+│       ├── ContextToggle.tsx        # 'Use my FitShift plan as context' toggle & badge
+│       ├── SuggestedPrompts.tsx     # Categorized question chips with instant send
+│       ├── TypingIndicator.tsx      # Subtle animated three-dot status indicator
+│       └── FollowUpSuggestions.tsx  # Dynamic next-step prompts below answers
+├── services/
+│   └── aiAssistantService.ts        # Isolated AI response generator & context logic
 ├── data/
 │   └── mockPlan.ts                  # Realistic Indian food datasets & exercise mappings
 ├── types/
