@@ -1,0 +1,37 @@
+ID,Item Name,Category,pack_size_g,price_clean,protein_clean,price_per_100g,cost_per_10g_protein,Tier
+1,Soya Chunks,Legumes,1000.0,139.0,52.0,13.9,2.67,ultra_budget
+2,Soya Granules,Legumes,500.0,75.0,52.0,15.0,2.88,ultra_budget
+3,Roasted Chana (Bhuna),Legumes,500.0,85.0,19.0,17.0,8.95,budget
+4,Chana Sattu,Legumes,500.0,75.0,25.0,15.0,6.0,ultra_budget
+5,Raw Peanuts,Nuts & Seeds,500.0,80.0,26.0,16.0,6.15,budget
+6,Yellow Moong Dal (Raw),Legumes,1000.0,130.0,24.0,13.0,5.42,ultra_budget
+7,Green Moong Sabut (Sprouts),Legumes,500.0,70.0,24.0,14.0,5.83,budget
+8,Kala Chana,Legumes,1000.0,100.0,20.0,10.0,5.0,ultra_budget
+9,Kabuli Chana,Legumes,1000.0,130.0,19.0,13.0,6.84,budget
+10,Rajma,Legumes,1000.0,140.0,22.0,14.0,6.36,budget
+11,Toned Milk,Dairy,1000.0,60.0,3.2,6.0,18.75,budget
+12,Double Toned Milk,Dairy,1000.0,54.0,3.3,5.4,16.36,budget
+13,Fresh Curd (Dahi),Dairy,400.0,35.0,3.5,8.75,25.0,budget
+14,Fresh Paneer (Loose),Dairy,200.0,80.0,18.0,40.0,22.22,moderate
+15,Low Fat High Protein Paneer,Dairy,200.0,95.0,24.0,47.5,19.79,moderate
+16,Chaas (Buttermilk),Dairy,500.0,15.0,1.8,3.0,16.67,ultra_budget
+17,Greek Yogurt (Plain),Dairy,100.0,50.0,7.5,50.0,66.67,premium
+18,Tofu (Soy Paneer),Plant Dairy,200.0,55.0,9.5,27.5,28.95,moderate
+19,Eggs (Tray of 30),Poultry,1500.0,195.0,13.0,13.0,10.0,budget
+20,Eggs (Pack of 6),Poultry,300.0,45.0,13.0,15.0,11.54,budget
+21,Chicken Breast (Boneless),Meat,1000.0,280.0,31.0,28.0,9.03,budget
+22,Chicken Curry Cut (Bone-in),Meat,1000.0,190.0,19.0,19.0,10.0,budget
+23,Chicken Liver (Kaleji),Meat,500.0,70.0,24.0,14.0,5.83,ultra_budget
+24,Rohu Fish (Freshwater),Fish,1000.0,220.0,18.0,22.0,12.22,moderate
+25,Canned Tuna in Water,Fish,180.0,160.0,24.0,88.89,37.04,premium
+26,Whole Wheat Atta,Grains,5000.0,210.0,12.0,4.2,3.5,ultra_budget
+27,White Rice (Raw),Grains,1000.0,60.0,7.0,6.0,8.57,ultra_budget
+28,Rolled Oats,Grains,1000.0,160.0,13.0,16.0,12.31,budget
+29,Poha (Flattened Rice),Grains,500.0,40.0,7.0,8.0,11.43,ultra_budget
+30,Dalia (Broken Wheat),Grains,500.0,35.0,11.0,7.0,6.36,ultra_budget
+31,Whole Wheat Bread,Bakery,400.0,50.0,8.5,12.5,14.71,budget
+32,Bananas,Fruits,1000.0,50.0,1.1,5.0,45.45,ultra_budget
+33,Potatoes,Tubers,1000.0,30.0,2.0,3.0,15.0,ultra_budget
+34,Peanut Butter (Unsweetened),Spreads,1000.0,350.0,28.0,35.0,12.5,moderate
+35,Raw Whey Protein Concentrate,Supplements,1000.0,1900.0,80.0,190.0,23.75,premium
+36,Flavoured Whey Protein Isolate,Supplements,1000.0,2600.0,82.0,260.0,31.71,premium

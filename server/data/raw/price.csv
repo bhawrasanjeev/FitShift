@@ -1,0 +1,37 @@
+ID,Item Name,Category,Serving / Pack,Price (₹),Protein / 100g,Tier
+1,Soya Chunks,Legumes,1000g,₹139,52.0g,Ultra Budget
+2,Soya Granules,Legumes,500g,₹115,52.0g,Ultra Budget
+3,Roasted Chana,Legumes,500g,₹72,19.0g,Budget
+4,Chana Sattu,Legumes,500g,₹97,25.0g,Ultra Budget
+5,Raw Peanuts,Nuts & Seeds,500g,₹108,26.0g,Budget
+6,Yellow Moong Dal,Legumes,1000g,₹148,24.0g,Ultra Budget
+7,Green Moong Sabut,Legumes,500g,₹89,24.0g,Budget
+8,Kala Chana,Legumes,1000g,₹112,20.0g,Ultra Budget
+9,Kabuli Chana,Legumes,1000g,₹129,19.0g,Budget
+10,Rajma,Legumes,1000g,₹199,22.0g,Budget
+11,Toned Milk,Dairy,1000ml,₹59,3.2g,Budget
+12,Double Toned Milk,Dairy,1000ml,₹54,3.3g,Budget
+13,Fresh Curd,Dairy,400g,₹35,3.5g,Budget
+14,Fresh Paneer (Loose),Dairy,200g,₹95,18.0g,Moderate
+15,Low Fat Paneer,Dairy,200g,₹91,24.0g,Moderate
+16,Chaas,Dairy,500ml,₹15,1.8g,Ultra Budget
+17,Greek Yogurt,Dairy,100g,₹60,7.5g,Premium
+18,Tofu,Plant Dairy,200g,₹53,9.5g,Moderate
+19,Eggs (Tray of 30),Poultry,1500g (~30 pcs),₹284,13.0g,Budget
+20,Eggs (Pack of 6),Poultry,300g (6 pcs),₹57,13.0g,Budget
+21,Chicken Breast,Meat,1000g,₹478,31.0g,Budget
+22,Chicken Curry Cut,Meat,1000g,₹329,19.0g,Budget
+23,Chicken Liver,Meat,500g,₹164,24.0g,Ultra Budget
+24,Rohu Fish,Fish,1000g,₹320,18.0g,Moderate
+25,Canned Tuna,Fish,180g,₹145,24.0g,Premium
+26,Whole Wheat Atta,Grains,5000g (5kg),₹224,12.0g,Ultra Budget
+27,White Rice,Grains,1000g,₹70,7.0g,Ultra Budget
+28,Rolled Oats,Grains,1000g,₹164,13.0g,Budget
+29,Poha,Grains,500g,₹40,7.0g,Ultra Budget
+30,Dalia,Grains,500g,₹42,11.0g,Ultra Budget
+31,Whole Wheat Bread,Bakery,400g,₹60,8.5g,Budget
+32,Bananas,Fruits,1000g (~1 doz),₹48,1.1g,Ultra Budget
+33,Potatoes,Tubers,1000g,₹29,2.0g,Ultra Budget
+34,Peanut Butter,Spreads,1000g,₹389,28.0g,Moderate
+35,Raw Whey (80%),Supplements,1000g,"₹2,099",80.0g,Premium
+36,Flavoured Whey Isolate,Supplements,1000g,"₹3,199",82.0g,Premium
