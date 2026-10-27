@@ -18,7 +18,8 @@ export type PlanTab =
   | 'schedule'
   | 'grocery'
   | 'supplements'
-  | 'recovery';
+  | 'recovery'
+  | 'ai';
 
 export interface AppSidebarProps {
   activeTab: PlanTab;
@@ -43,6 +44,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
     { id: 'grocery', label: 'Grocery List', icon: <ShoppingCart className="w-4 h-4" /> },
     { id: 'supplements', label: 'Supplements', icon: <Pill className="w-4 h-4" /> },
     { id: 'recovery', label: 'Recovery & Advice', icon: <MoonStar className="w-4 h-4" /> },
+    { id: 'ai', label: 'AI Assistant', icon: <Sparkles className="w-4 h-4" />, badge: 'AI' },
   ];
 
   return (
@@ -74,7 +76,13 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                   <span>{item.label}</span>
                 </div>
                 {item.badge && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-zinc-100 text-zinc-500 font-medium">
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-semibold ${
+                      item.id === 'ai'
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : 'bg-zinc-100 text-zinc-500 font-medium'
+                    }`}
+                  >
                     {item.badge}
                   </span>
                 )}

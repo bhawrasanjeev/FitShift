@@ -17,6 +17,7 @@ import { SupplementsView } from '../components/supplements/SupplementsView';
 import { RecoveryView } from '../components/recovery/RecoveryView';
 import { LateTiredModal } from '../components/overview/LateTiredModal';
 import { EditPlanModal } from '../components/overview/EditPlanModal';
+import { AIAssistantPage } from '../components/ai/AIAssistantPage';
 import {
   generateWorkoutSchedule,
   generateMockMeals,
@@ -29,14 +30,16 @@ import {
 
 export interface PlanPageProps {
   initialUserData: OnboardingData;
+  initialTab?: PlanTab;
   onReturnToHome: () => void;
 }
 
 export const PlanPage: React.FC<PlanPageProps> = ({
   initialUserData,
+  initialTab = 'overview',
 }) => {
   const [userData, setUserData] = useState<OnboardingData>(initialUserData);
-  const [activeTab, setActiveTab] = useState<PlanTab>('overview');
+  const [activeTab, setActiveTab] = useState<PlanTab>(initialTab);
   const [currentEnvironment, setCurrentEnvironment] = useState<TrainingEnvironment>(
     initialUserData.training.environment
   );
@@ -251,6 +254,20 @@ export const PlanPage: React.FC<PlanPageProps> = ({
 
           {activeTab === 'recovery' && (
             <RecoveryView guidance={mockRecoveryGuidance} />
+          )}
+
+          {activeTab === 'ai' && (
+            <AIAssistantPage
+              userProfile={userData}
+              onNavigateToPlanTab={(tab) => {
+                setActiveTab(tab);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onBackToPlan={() => {
+                setActiveTab('overview');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
           )}
         </PageContainer>
       </main>

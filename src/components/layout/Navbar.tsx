@@ -1,10 +1,10 @@
 import React from 'react';
-import { Dumbbell, ArrowRight } from 'lucide-react';
+import { Dumbbell, ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 export interface NavbarProps {
-  currentView: 'landing' | 'onboarding' | 'plan';
-  onNavigate: (view: 'landing' | 'onboarding' | 'plan') => void;
+  currentView: 'landing' | 'onboarding' | 'plan' | 'ai';
+  onNavigate: (view: 'landing' | 'onboarding' | 'plan' | 'ai') => void;
   hasPlan?: boolean;
 }
 
@@ -81,7 +81,21 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
 
         {/* Right CTA */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* AI Assistant Nav Item */}
+          <button
+            type="button"
+            onClick={() => onNavigate('ai')}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              currentView === 'ai'
+                ? 'bg-emerald-50 text-emerald-950 border border-emerald-300 shadow-2xs font-bold'
+                : 'text-zinc-700 hover:text-emerald-950 hover:bg-zinc-100 border border-zinc-200/80 bg-white'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
+            <span>AI Assistant</span>
+          </button>
+
           {hasPlan && currentView !== 'plan' && (
             <Button
               variant="outline"

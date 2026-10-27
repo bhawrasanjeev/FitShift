@@ -215,3 +215,32 @@ export interface GeneratedPlan {
   dailySchedule: ScheduleEvent[];
   isLateTiredModeActive: boolean;
 }
+
+// AI Assistant Types
+export interface ChatMessageAction {
+  label: string;
+  tab: 'workout' | 'diet' | 'schedule' | 'grocery' | 'supplements' | 'recovery' | 'overview';
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+  actionLink?: ChatMessageAction;
+  followUps?: string[];
+  contextUsed?: {
+    goal: string;
+    environment: string;
+    diet: string;
+    dailyBudget: number;
+    durationMinutes: number;
+  };
+}
+
+export interface SuggestedPromptCategory {
+  id: string;
+  categoryName: string;
+  prompts: string[];
+}
+

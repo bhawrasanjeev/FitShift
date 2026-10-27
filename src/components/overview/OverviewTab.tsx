@@ -282,6 +282,38 @@ export const OverviewTab: React.FC<OverviewTabProps> = ({
           ))}
         </div>
       </div>
+
+      {/* Contextual AI Assistant Entry Point */}
+      <div className="bg-emerald-50/40 rounded-2xl border border-emerald-200/80 p-5 sm:p-6 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-start gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+            <Sparkles className="w-5 h-5 text-emerald-700" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <h4 className="text-sm font-bold text-zinc-950">
+                Have questions about your {userProfile.personal.goal.replace('_', ' ')} plan?
+              </h4>
+              <span className="text-[10px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-200">
+                AI Context Active
+              </span>
+            </div>
+            <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
+              Ask about smart meal swaps for your ₹{userProfile.budget.dailyBudgetRupees}/day budget, form tips for your {currentEnvironment} exercises, or schedule adjustments.
+            </p>
+          </div>
+        </div>
+
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => onNavigateTab('ai')}
+          rightIcon={<ArrowRight className="w-4 h-4" />}
+          className="shrink-0 text-xs font-semibold"
+        >
+          Ask AI Assistant
+        </Button>
+      </div>
     </div>
   );
 };

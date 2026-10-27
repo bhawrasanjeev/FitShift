@@ -6,11 +6,14 @@ import { Footer } from './components/layout/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { OnboardingWizard } from './components/onboarding/OnboardingWizard';
 import { PlanPage } from './pages/PlanPage';
+import { AIAssistantPage } from './components/ai/AIAssistantPage';
+import { PlanTab } from './components/layout/AppSidebar';
 
 export function App() {
-  const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'plan'>('landing');
+  const [currentView, setCurrentView] = useState<'landing' | 'onboarding' | 'plan' | 'ai'>('landing');
   const [userData, setUserData] = useState<OnboardingData>(defaultOnboardingData);
   const [hasGeneratedPlan, setHasGeneratedPlan] = useState<boolean>(false);
+  const [planInitialTab, setPlanInitialTab] = useState<PlanTab>('overview');
 
   const handleStartOnboarding = () => {
     setCurrentView('onboarding');
@@ -20,6 +23,7 @@ export function App() {
   const handleCompleteOnboarding = (completedData: OnboardingData) => {
     setUserData(completedData);
     setHasGeneratedPlan(true);
+    setPlanInitialTab('overview');
     setCurrentView('plan');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -29,8 +33,18 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleNavigate = (view: 'landing' | 'onboarding' | 'plan') => {
+  const handleNavigate = (view: 'landing' | 'onboarding' | 'plan' | 'ai') => {
+    if (view === 'plan') {
+      setPlanInitialTab('overview');
+    }
     setCurrentView(view);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigateFromAI = (tab: PlanTab) => {
+    setHasGeneratedPlan(true);
+    setPlanInitialTab(tab);
+    setCurrentView('plan');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -50,6 +64,7 @@ export function App() {
             onStartOnboarding={handleStartOnboarding}
             onViewSamplePlan={() => {
               setHasGeneratedPlan(true);
+              setPlanInitialTab('overview');
               setCurrentView('plan');
             }}
           />
@@ -65,8 +80,22 @@ export function App() {
 
         {currentView === 'plan' && (
           <PlanPage
+            key={planInitialTab}
             initialUserData={userData}
+            initialTab={planInitialTab}
             onReturnToHome={() => handleNavigate('landing')}
+          />
+        )}
+
+        {currentView === 'ai' && (
+          <AIAssistantPage
+            userProfile={userData}
+            onNavigateToPlanTab={handleNavigateFromAI}
+            onBackToPlan={() => {
+              setHasGeneratedPlan(true);
+              setPlanInitialTab('overview');
+              setCurrentView('plan');
+            }}
           />
         )}
       </div>
