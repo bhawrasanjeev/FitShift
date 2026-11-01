@@ -1,20 +1,23 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { OnboardingData, ChatMessage as ChatMessageType } from '../../types';
-import { ChatMessage } from './ChatMessage';
-import { ChatInput } from './ChatInput';
-import { SuggestedPrompts } from './SuggestedPrompts';
-import { TypingIndicator } from './TypingIndicator';
-import { ContextToggle } from './ContextToggle';
-import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
-import { generateAIResponse } from '../../services/aiAssistantService';
 import {
   Sparkles,
-  ShieldAlert,
-  Trash2,
   ArrowLeft,
+  BotOff,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+  Cpu,
 } from 'lucide-react';
 import { PlanTab } from '../layout/AppSidebar';
+import { getAIStatus, AIStatusResponse } from '../../services/api';
+import { generateAIResponse } from '../../services/aiAssistantService';
+import { ChatMessage } from './ChatMessage';
+import { ChatInput } from './ChatInput';
+import { ContextToggle } from './ContextToggle';
+import { SuggestedPrompts } from './SuggestedPrompts';
+import { TypingIndicator } from './TypingIndicator';
 
 export interface AIAssistantPageProps {
   userProfile?: OnboardingData;
@@ -27,59 +30,87 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({
   onNavigateToPlanTab,
   onBackToPlan,
 }) => {
+  const [status, setStatus] = useState<AIStatusResponse | null>(null);
+  const [isLoadingStatus, setIsLoadingStatus] = useState<boolean>(true);
+  const [statusError, setStatusError] = useState<string | null>(null);
+
+  // Chat State
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [usePlanContext, setUsePlanContext] = useState<boolean>(true);
-  const [isClearModalOpen, setIsClearModalOpen] = useState<boolean>(false);
+  const [chatError, setChatError] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const checkStatus = async () => {
+    setIsLoadingStatus(true);
+    setStatusError(null);
+    try {
+      const data = await getAIStatus();
+      setStatus(data);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unable to connect to AI service';
+      setStatusError(msg);
+      setStatus({
+        configured: false,
+        provider: null,
+        message: msg,
+      });
+    } finally {
+      setIsLoadingStatus(false);
+    }
+  };
+
+  useEffect(() => {
+    checkStatus();
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, isLoading]);
+    if (messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages, isGenerating]);
 
-  const handleSendMessage = async (userText: string) => {
+  const handleSendMessage = async (text: string) => {
+    if (!text.trim() || isGenerating) return;
+
+    setChatError(null);
     const userMsg: ChatMessageType = {
       id: `user-${Date.now()}`,
       role: 'user',
-      content: userText,
+      content: text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
     setMessages((prev) => [...prev, userMsg]);
-    setIsLoading(true);
+    setIsGenerating(true);
 
     try {
-      const response = await generateAIResponse(userText, usePlanContext, userProfile);
+      const aiReply = await generateAIResponse(text, usePlanContext, userProfile);
       const assistantMsg: ChatMessageType = {
-        ...response,
-        id: `assistant-${Date.now()}`,
+        id: `ai-${Date.now()}`,
+        role: 'assistant',
+        content: aiReply.content,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        contextUsed: aiReply.contextUsed,
       };
       setMessages((prev) => [...prev, assistantMsg]);
-    } catch {
-      // Fallback
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `assistant-${Date.now()}`,
-          role: 'assistant',
-          content: 'I apologize, but I could not formulate that response right now. Please try asking again.',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : 'Failed to generate response. Please try again.';
+      setChatError(errorMsg);
     } finally {
-      setIsLoading(false);
+      setIsGenerating(false);
     }
   };
 
-  const handleClearConfirmed = () => {
+  const handleClearChat = () => {
     setMessages([]);
-    setIsClearModalOpen(false);
+    setChatError(null);
   };
 
   return (
@@ -97,120 +128,188 @@ export const AIAssistantPage: React.FC<AIAssistantPageProps> = ({
               <span>Back to My Plan Dashboard</span>
             </button>
           )}
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 tracking-tight">
-            Your fitness questions, answered.
-          </h1>
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-zinc-950 tracking-tight">
+              FitShift AI Assistant
+            </h1>
+            {status?.configured && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <Cpu className="w-3 h-3 text-emerald-700" />
+                <span className="capitalize">{status.provider} Connected</span>
+              </span>
+            )}
+          </div>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1 leading-relaxed">
-            Get practical guidance on workouts, nutrition, recovery, and making fitness fit your routine.
+            Intelligent conversational companion for routine-first fitness and Indian nutrition guidance.
           </p>
         </div>
-
-        {messages.length > 0 && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setIsClearModalOpen(true)}
-            leftIcon={<Trash2 className="w-3.5 h-3.5 text-rose-500" />}
-            className="text-xs self-start sm:self-center"
-          >
-            New Conversation
-          </Button>
-        )}
       </div>
 
-      {/* Context Aware Toggle Switch */}
-      <ContextToggle
-        usePlanContext={usePlanContext}
-        onToggle={setUsePlanContext}
-        userProfile={userProfile}
-      />
+      {/* Loading AI Service State */}
+      {isLoadingStatus && (
+        <div className="bg-white rounded-3xl border border-zinc-200/90 p-12 text-center space-y-3">
+          <RefreshCw className="w-8 h-8 text-emerald-600 animate-spin mx-auto" />
+          <p className="text-sm font-semibold text-zinc-800">Checking AI service configuration...</p>
+        </div>
+      )}
 
-      {/* Conversation Container */}
-      <div className="bg-zinc-50/60 rounded-3xl border border-zinc-200/90 p-4 sm:p-6 min-h-[420px] flex flex-col justify-between space-y-6">
-        {/* Messages or Empty State */}
-        {messages.length === 0 ? (
-          <div className="py-6 sm:py-10 space-y-8">
-            <div className="text-center max-w-lg mx-auto">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto mb-3 shadow-2xs">
-                <Sparkles className="w-6 h-6 stroke-[2]" />
-              </div>
-              <h3 className="text-base sm:text-lg font-bold text-zinc-900">
-                How can FitShift guide you today?
-              </h3>
-              <p className="text-xs text-zinc-500 mt-1 leading-relaxed">
-                Explore affordable Indian protein staples, workout exercise substitutes, recovery tips, or understand the logic behind your generated blueprint.
-              </p>
+      {/* State A: AI Service Not Configured */}
+      {!isLoadingStatus && status && !status.configured && (
+        <div className="bg-white rounded-3xl border border-zinc-200/90 p-8 sm:p-12 shadow-xs text-center space-y-6">
+          <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mx-auto shadow-2xs">
+            <BotOff className="w-8 h-8 stroke-[1.8]" />
+          </div>
+
+          <div className="max-w-md mx-auto space-y-2">
+            <h2 className="text-xl font-bold text-zinc-900 tracking-tight">
+              AI Assistant is not configured yet
+            </h2>
+            <p className="text-sm text-zinc-500 leading-relaxed">
+              Interactive chat connects to live AI models (Gemini / OpenAI). FitShift does not use simulated responses or fake chat fallback when an API key is not configured.
+            </p>
+          </div>
+
+          {/* Configuration Setup Guide */}
+          <div className="max-w-xl mx-auto text-left bg-zinc-50 rounded-2xl border border-zinc-200/80 p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-800">
+              <Cpu className="w-4 h-4 text-emerald-700" />
+              <span>How to Enable AI Assistant</span>
             </div>
-
-            {/* Suggested Question Categories */}
-            <SuggestedPrompts onSelectPrompt={handleSendMessage} />
+            <p className="text-xs text-zinc-600 leading-relaxed">
+              Add your API key to <code className="px-1.5 py-0.5 bg-zinc-200/70 rounded text-[11px] font-mono text-zinc-800">server/.env</code>:
+            </p>
+            <div className="p-3 bg-zinc-900 text-zinc-100 rounded-xl text-xs font-mono overflow-x-auto space-y-1">
+              <div className="text-zinc-400"># Either Gemini (recommended) or OpenAI</div>
+              <div>GEMINI_API_KEY=your_gemini_api_key_here</div>
+              <div className="text-zinc-500"># OR</div>
+              <div>OPENAI_API_KEY=your_openai_api_key_here</div>
+            </div>
+            <div className="pt-1 flex items-center justify-between">
+              <span className="text-[11px] text-zinc-500">
+                {statusError ? `Error: ${statusError}` : 'Once configured, restart the server or click retry below.'}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={checkStatus}
+                leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+                className="text-xs"
+              >
+                Check Again
+              </Button>
+            </div>
           </div>
-        ) : (
-          <div className="space-y-5">
-            {messages.map((msg) => (
-              <ChatMessage
-                key={msg.id}
-                message={msg}
-                onSelectFollowUp={handleSendMessage}
-                onNavigateSection={onNavigateToPlanTab}
-              />
-            ))}
 
-            {isLoading && <TypingIndicator />}
-            <div ref={messagesEndRef} />
+          {/* Real Active Systems Notice */}
+          <div className="max-w-xl mx-auto text-left bg-emerald-50/50 rounded-2xl border border-emerald-200/60 p-5 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-800">
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+              <span>Currently Active Real-Data Systems</span>
+            </div>
+            <ul className="text-xs text-zinc-700 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-600 font-bold">•</span>
+                <span><strong>Deterministic Workout Generator:</strong> Complete 7-day schedules mapped from 876 real exercises.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-600 font-bold">•</span>
+                <span><strong>Core Nutrition Engine:</strong> Mifflin-St Jeor BMR, TDEE, and goal-adjusted macro targets.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-emerald-600 font-bold">•</span>
+                <span><strong>Budget Diet Optimizer:</strong> Real-time Indian whole-food staple allocation and meal planning.</span>
+              </li>
+            </ul>
           </div>
-        )}
 
-        {/* Input Field Bar */}
-        <div className="pt-2">
+          <div className="pt-2 flex justify-center gap-3">
+            {onBackToPlan && (
+              <Button
+                variant="primary"
+                size="md"
+                onClick={onBackToPlan}
+                leftIcon={<Sparkles className="w-4 h-4" />}
+              >
+                View Active Plan Dashboard
+              </Button>
+            )}
+            {onNavigateToPlanTab && (
+              <Button
+                variant="outline"
+                size="md"
+                onClick={() => onNavigateToPlanTab('diet')}
+              >
+                Go to Diet Tab
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* State B: AI Service Configured & Ready */}
+      {!isLoadingStatus && status && status.configured && (
+        <div className="space-y-4">
+          {/* Context Toggle */}
+          <ContextToggle
+            usePlanContext={usePlanContext}
+            onToggle={setUsePlanContext}
+            userProfile={userProfile}
+          />
+
+          {/* Chat Messages Container */}
+          <div className="bg-white rounded-3xl border border-zinc-200/90 p-4 sm:p-6 shadow-xs min-h-[420px] max-h-[600px] overflow-y-auto flex flex-col justify-between space-y-4">
+            {messages.length === 0 ? (
+              <div className="py-8 text-center space-y-6">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center mx-auto shadow-2xs">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div className="max-w-md mx-auto space-y-1.5">
+                  <h3 className="text-base font-bold text-zinc-900">
+                    Ask me anything about your routine
+                  </h3>
+                  <p className="text-xs text-zinc-500 leading-relaxed">
+                    Powered by live {status.provider === 'gemini' ? 'Google Gemini' : 'OpenAI'} intelligence. Your saved profile constraints are automatically referenced.
+                  </p>
+                </div>
+
+                <div className="text-left pt-2">
+                  <SuggestedPrompts onSelectPrompt={handleSendMessage} />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {messages.map((msg) => (
+                  <ChatMessage
+                    key={msg.id}
+                    message={msg}
+                    onSelectFollowUp={handleSendMessage}
+                    onNavigateSection={onNavigateToPlanTab}
+                  />
+                ))}
+
+                {isGenerating && <TypingIndicator />}
+
+                {chatError && (
+                  <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 flex items-start gap-2.5 text-xs text-rose-800">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                    <span>{chatError}</span>
+                  </div>
+                )}
+
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
+
+          {/* Interactive Chat Input */}
           <ChatInput
             onSendMessage={handleSendMessage}
-            isLoading={isLoading}
-            onClearChat={() => setIsClearModalOpen(true)}
+            isLoading={isGenerating}
+            onClearChat={handleClearChat}
             hasMessages={messages.length > 0}
           />
         </div>
-      </div>
-
-      {/* Safety & Educational Disclaimer */}
-      <div className="p-3.5 rounded-xl bg-zinc-50 border border-zinc-200/80 flex items-start gap-2.5 text-xs text-zinc-500">
-        <ShieldAlert className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
-        <p className="leading-relaxed">
-          <strong>Educational & lifestyle advisory:</strong> FitShift Assistant provides non-clinical fitness and whole-food nutritional information. It never prescribes medical diets, treatments, or extreme regimens. Always consult a licensed physician or registered dietitian for medical diagnosis or chronic health conditions.
-        </p>
-      </div>
-
-      {/* Clear Chat Confirmation Modal */}
-      <Modal
-        isOpen={isClearModalOpen}
-        onClose={() => setIsClearModalOpen(false)}
-        title="Start a new conversation?"
-        description="This will clear your current questions and answers. Your saved workout and meal plan will not be affected."
-        maxWidth="sm"
-        footer={
-          <div className="flex items-center justify-end gap-2 w-full">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsClearModalOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={handleClearConfirmed}
-              leftIcon={<Trash2 className="w-3.5 h-3.5" />}
-            >
-              Clear Conversation
-            </Button>
-          </div>
-        }
-      >
-        <p className="text-xs text-zinc-600 leading-relaxed">
-          Are you sure you want to clear this chat history? You will return to the suggested topics screen.
-        </p>
-      </Modal>
+      )}
     </div>
   );
 };

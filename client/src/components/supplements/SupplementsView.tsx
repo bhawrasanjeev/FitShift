@@ -1,27 +1,26 @@
 import React from 'react';
-import { SupplementRecommendation, SupplementPreference } from '../../types';
+import { SupplementPreference, OptimizedFood } from '../../types';
 import { Badge } from '../ui/Badge';
 import {
   Apple,
   Pill,
   ShieldCheck,
   IndianRupee,
-  Clock,
-  AlertCircle,
 } from 'lucide-react';
 
 export interface SupplementsViewProps {
   preference: SupplementPreference;
   monthlyBudget?: number;
-  recommendations: SupplementRecommendation[];
+  allocatedFoods?: OptimizedFood[];
 }
 
 export const SupplementsView: React.FC<SupplementsViewProps> = ({
   preference,
   monthlyBudget,
-  recommendations,
+  allocatedFoods = [],
 }) => {
   const isFoodFirst = preference === 'no_supplements';
+  const activeSupplements = allocatedFoods.filter((f) => f.isSupplement);
 
   const highProteinIndianFoods = [
     {
@@ -61,7 +60,7 @@ export const SupplementsView: React.FC<SupplementsViewProps> = ({
               Supplement & Whole-Food Advisory
             </h2>
             <Badge variant={isFoodFirst ? 'accent' : 'default'} size="sm">
-              {isFoodFirst ? 'Food-First Active' : 'Supplements Enabled'}
+              {isFoodFirst ? 'Food-First Active' : 'Supplements Allowed'}
             </Badge>
           </div>
           <p className="text-xs sm:text-sm text-zinc-500 mt-1">
@@ -74,7 +73,7 @@ export const SupplementsView: React.FC<SupplementsViewProps> = ({
             <span className="text-[11px] text-zinc-400 block font-medium">Monthly Cap</span>
             <span className="text-sm font-bold text-emerald-800 flex items-center justify-end">
               <IndianRupee className="w-3.5 h-3.5 inline" />
-              {monthlyBudget} / month
+              ₹{monthlyBudget} / month
             </span>
           </div>
         )}
@@ -89,23 +88,65 @@ export const SupplementsView: React.FC<SupplementsViewProps> = ({
           <h3 className="text-sm font-bold text-zinc-900">
             {isFoodFirst
               ? 'Your Plan is 100% Whole-Food Powered'
-              : 'Food Foundation First, Supplements Second'}
+              : 'Whole Food Foundation First, Convenience Supplements Second'}
           </h3>
           <p className="text-xs text-zinc-600 mt-1 leading-relaxed">
-            Supplements provide zero magical fat-loss or muscle-building properties that whole nutrition cannot supply. They exist strictly for convenience when daily schedule or kitchen access is limited.
+            Whole food staples provide superior satiety, micronutrients, and economic efficiency. Supplements exist strictly as convenience options when daily cooking or digestion capacity is constrained.
           </p>
         </div>
       </div>
+
+      {/* Optimizer Supplements Status */}
+      {!isFoodFirst && (
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Pill className="w-4 h-4 text-zinc-700" />
+            <h4 className="text-sm font-bold text-zinc-900">
+              Diet Optimizer Allocation
+            </h4>
+          </div>
+
+          {activeSupplements.length === 0 ? (
+            <div className="p-4 rounded-2xl bg-zinc-50 border border-zinc-200/80 text-xs text-zinc-600 space-y-1">
+              <p className="font-semibold text-zinc-800">
+                No supplements were required for your target.
+              </p>
+              <p>
+                The Budget Diet Optimizer satisfied your daily protein requirement completely using whole food staples within your budget limit.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {activeSupplements.map((sup, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-xl border border-purple-200 bg-purple-50/50 shadow-2xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <h5 className="text-sm font-bold text-purple-950">{sup.name}</h5>
+                    <span className="text-xs font-bold text-purple-900">
+                      ₹{sup.estimatedCost}/day
+                    </span>
+                  </div>
+                  <p className="text-xs text-purple-800 mt-1">
+                    Portion: {sup.quantityGrams}g delivering {sup.proteinGrams}g protein.
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Whole Food Alternatives Section */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
             <Apple className="w-4 h-4 text-emerald-700" />
-            Budget High-Protein Indian Whole Foods
+            Primary High-Protein Indian Whole Food Staples
           </h4>
           <span className="text-[11px] text-emerald-800 font-semibold">
-            Zero powders required
+            Nutritional Reference
           </span>
         </div>
 
@@ -126,58 +167,6 @@ export const SupplementsView: React.FC<SupplementsViewProps> = ({
           ))}
         </div>
       </div>
-
-      {/* Optional Supplement Guidance if open */}
-      {!isFoodFirst && (
-        <div className="space-y-4 pt-4 border-t border-zinc-200">
-          <div className="flex items-center gap-2">
-            <Pill className="w-4 h-4 text-zinc-600" />
-            <h4 className="text-sm font-bold text-zinc-900">
-              Evidence-Backed Supplement Recommendations
-            </h4>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {recommendations.map((rec) => (
-              <div
-                key={rec.id}
-                className="p-5 rounded-2xl border border-zinc-200 bg-white shadow-2xs flex flex-col justify-between space-y-4"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
-                      {rec.productCategory}
-                    </span>
-                    <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md flex items-center">
-                      <IndianRupee className="w-3 h-3 inline" />
-                      ~{rec.estimatedMonthlyCostRupees}/mo
-                    </span>
-                  </div>
-
-                  <h5 className="text-sm font-bold text-zinc-900">{rec.productName}</h5>
-                  <p className="text-xs text-zinc-600 mt-2 leading-relaxed">{rec.whyUseful}</p>
-
-                  <div className="mt-3 p-3 bg-zinc-50 rounded-xl text-xs space-y-1.5 border border-zinc-100">
-                    <div className="text-zinc-500">
-                      <span className="font-semibold text-zinc-700">Food Alternative: </span>
-                      {rec.foodBasedAlternative}
-                    </div>
-                    <div className="text-zinc-500 flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-zinc-400 shrink-0" />
-                      <span>{rec.recommendedTiming}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="text-[11px] text-amber-700 bg-amber-50/70 p-2.5 rounded-lg border border-amber-200/70 flex items-start gap-1.5">
-                  <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5" />
-                  <span>{rec.cautionNotice}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

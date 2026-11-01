@@ -1,5 +1,4 @@
 import React from 'react';
-import { RecoveryGuidance } from '../../types';
 import {
   Moon,
   Droplets,
@@ -10,16 +9,48 @@ import {
 } from 'lucide-react';
 
 export interface RecoveryViewProps {
-  guidance: RecoveryGuidance[];
+  sleepHours?: number;
+  wakeUpTime?: string;
 }
 
-export const RecoveryView: React.FC<RecoveryViewProps> = ({ guidance }) => {
-  const categoryIcons: Record<string, React.ReactNode> = {
-    sleep: <Moon className="w-5 h-5 text-indigo-600" />,
-    hydration: <Droplets className="w-5 h-5 text-blue-600" />,
-    mobility: <Activity className="w-5 h-5 text-emerald-600" />,
-    mental: <Smile className="w-5 h-5 text-amber-600" />,
-  };
+export const RecoveryView: React.FC<RecoveryViewProps> = ({
+  sleepHours = 7.5,
+  wakeUpTime = '06:30',
+}) => {
+  const recoveryPillars = [
+    {
+      id: 'sleep',
+      category: 'sleep',
+      icon: <Moon className="w-5 h-5 text-indigo-600" />,
+      title: 'Sleep & Endocrine Repair',
+      tip: `Your configured target is ${sleepHours} hours of sleep, waking up at ${wakeUpTime}. Deep non-REM sleep is when human growth hormone (HGH) peaks to repair muscle tissue broken down during exercise.`,
+      actionableStep: `Aim to be in bed ${Math.round(sleepHours + 0.5)} hours before ${wakeUpTime} to account for natural sleep latency.`,
+    },
+    {
+      id: 'hydration',
+      category: 'hydration',
+      icon: <Droplets className="w-5 h-5 text-blue-600" />,
+      title: 'Daily Hydration & Electrolyte Balance',
+      tip: 'In Indian climates, sub-clinical dehydration reduces workout performance and increases perceived exertion. Drinking water with meals and having buttermilk or lemon water maintains fluid balance.',
+      actionableStep: 'Drink 500ml water within 20 minutes of waking up, and keep a 1-liter bottle at your desk throughout the day.',
+    },
+    {
+      id: 'mobility',
+      category: 'mobility',
+      icon: <Activity className="w-5 h-5 text-emerald-600" />,
+      title: 'Spinal Decompression & Posture Reset',
+      tip: 'Extended desk sitting causes anterior pelvic tilt and tight hip flexors. 5 minutes of daily joint mobility restores synovial fluid without needing dedicated gym equipment.',
+      actionableStep: 'Perform 60 seconds of deep bodyweight squats (Malasana) and 10 Cat-Cow spinal flows after work transit.',
+    },
+    {
+      id: 'mental',
+      category: 'mental',
+      icon: <Smile className="w-5 h-5 text-amber-600" />,
+      title: 'Cortisol Management & Nervous System Recovery',
+      tip: 'Chronic professional stress keeps the sympathetic nervous system elevated, which impairs glycogen replenishment and muscle protein synthesis.',
+      actionableStep: 'Take a 10-minute device-free walk after dinner to downregulate nervous system arousal before bedtime.',
+    },
+  ];
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -50,14 +81,14 @@ export const RecoveryView: React.FC<RecoveryViewProps> = ({ guidance }) => {
             Why Rest Multiplies Training Returns
           </h3>
           <p className="text-xs text-zinc-300 mt-1 leading-relaxed">
-            During heavy training sessions, you create micro-tears in muscle myofibrils. It is exclusively during restorative deep sleep and balanced rest days that your endocrine system releases growth hormone to rebuild those fibers thicker and more resilient.
+            During training sessions, you create micro-tears in muscle myofibrils. It is exclusively during restorative deep sleep and balanced rest days that your endocrine system releases growth hormone to rebuild those fibers thicker and more resilient.
           </p>
         </div>
       </div>
 
       {/* Grid of Recovery Pillars */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {guidance.map((item) => (
+        {recoveryPillars.map((item) => (
           <div
             key={item.id}
             className="p-5 rounded-2xl border border-zinc-200 bg-white hover:border-zinc-300 transition-all shadow-2xs flex flex-col justify-between"
@@ -65,7 +96,7 @@ export const RecoveryView: React.FC<RecoveryViewProps> = ({ guidance }) => {
             <div>
               <div className="flex items-center gap-2.5 mb-2.5">
                 <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-100">
-                  {categoryIcons[item.category] || <Activity className="w-4 h-4" />}
+                  {item.icon}
                 </div>
                 <h4 className="text-base font-bold text-zinc-900">{item.title}</h4>
               </div>

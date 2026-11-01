@@ -13,8 +13,8 @@ export const errorHandler = (err, req, res, next) => {
     }
   };
 
-  // Only expose stack trace in non-production environments
-  if (process.env.NODE_ENV === 'development' && err.stack) {
+  // Only expose stack trace for 500+ server errors in development environments
+  if (process.env.NODE_ENV === 'development' && statusCode >= 500 && err.stack) {
     response.error.stack = err.stack;
   }
 

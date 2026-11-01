@@ -103,7 +103,8 @@ export const PersonalBasicsStep: React.FC<PersonalBasicsStepProps> = ({
               id="user-age"
               type="number"
               min="14"
-              max="90"
+              max="100"
+              placeholder="e.g. 25"
               value={data.age || ''}
               onChange={(e) => onChange({ age: Number(e.target.value) })}
               className="w-full px-3.5 py-2.5 pr-14 rounded-xl border border-zinc-200 bg-white text-zinc-900 text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all shadow-2xs"
@@ -125,8 +126,9 @@ export const PersonalBasicsStep: React.FC<PersonalBasicsStepProps> = ({
             <input
               id="user-height"
               type="number"
-              min="120"
-              max="230"
+              min="100"
+              max="250"
+              placeholder="e.g. 175"
               value={data.heightCm || ''}
               onChange={(e) => onChange({ heightCm: Number(e.target.value) })}
               className="w-full px-3.5 py-2.5 pr-12 rounded-xl border border-zinc-200 bg-white text-zinc-900 text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all shadow-2xs"
@@ -148,8 +150,9 @@ export const PersonalBasicsStep: React.FC<PersonalBasicsStepProps> = ({
             <input
               id="user-weight"
               type="number"
-              min="35"
-              max="200"
+              min="30"
+              max="300"
+              placeholder="e.g. 70"
               value={data.weightKg || ''}
               onChange={(e) => onChange({ weightKg: Number(e.target.value) })}
               className="w-full px-3.5 py-2.5 pr-12 rounded-xl border border-zinc-200 bg-white text-zinc-900 text-sm focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 transition-all shadow-2xs"

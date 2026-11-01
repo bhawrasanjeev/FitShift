@@ -17,7 +17,6 @@ import {
 
 export interface LandingPageProps {
   onStartOnboarding: () => void;
-  onViewSamplePlan?: () => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({
@@ -84,14 +83,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           {/* Hero Interface Preview Card */}
           <div className="mt-14 max-w-5xl mx-auto">
             <div className="bg-white rounded-3xl border border-zinc-200/90 shadow-2xl p-4 sm:p-6 text-left">
-              {/* Fake App Header */}
+              {/* App Interface Preview Header */}
               <div className="flex items-center justify-between pb-4 border-b border-zinc-100 mb-6">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-rose-400/80" />
                   <div className="w-3 h-3 rounded-full bg-amber-400/80" />
                   <div className="w-3 h-3 rounded-full bg-emerald-400/80" />
                   <span className="ml-2 text-xs font-mono text-zinc-400">
-                    fitshift.app/demo-preview
+                    fitshift.app/preview
                   </span>
                 </div>
                 <div className="flex items-center gap-2">

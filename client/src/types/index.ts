@@ -106,6 +106,10 @@ export interface ExerciseAlternative {
   environment: TrainingEnvironment | 'both';
   equipment: string;
   note: string;
+  thumbnailUrl?: string;
+  instructions?: string[];
+  commonMistakes?: string[];
+  targetMuscle?: string;
 }
 
 export interface Exercise {
@@ -204,17 +208,124 @@ export interface ScheduleEvent {
   duration?: string;
 }
 
+// Real FitShift Engine Plan Types (Phase 4 & 5 & Workout & AI)
+export interface OptimizedFood {
+  name: string;
+  quantityGrams: number;
+  estimatedCost: number;
+  proteinGrams: number;
+  isSupplement?: boolean;
+}
+
+export interface MealItem {
+  name: string;
+  quantityGrams: number;
+  proteinGrams: number;
+  estimatedCost: number;
+  category: string;
+}
+
+export interface PlannedMeal {
+  id: string;
+  mealType: string;
+  title: string;
+  totalProteinGrams: number;
+  estimatedCost: number;
+  items: MealItem[];
+}
+
+export interface GroceryEntry {
+  id: string;
+  name: string;
+  category: string;
+  weeklyQuantity: string;
+  weeklyGrams: number;
+  estimatedWeeklyCost: number;
+  estimatedDailyCost: number;
+  checked?: boolean;
+}
+
+export interface DailyMealTiming {
+  time: string;
+  meal: string;
+  description?: string;
+}
+
+export interface DayMealEntry {
+  time: string;
+  mealName: string;
+  foodAndQuantity: string;
+  categoryTag?: string;
+}
+
+export interface DayMealPlan {
+  dayNumber: number;
+  dayName: string;
+  focusTitle: string;
+  estimatedCalories: string;
+  estimatedProtein: string;
+  meals: DayMealEntry[];
+}
+
+export interface BudgetPortionGuideline {
+  food: string;
+  portion: string;
+  notes?: string;
+}
+
+export interface BudgetManagementGuide {
+  headline: string;
+  description: string;
+  guidelines: BudgetPortionGuideline[];
+}
+
+export interface DietPlanData {
+  feasible: boolean;
+  budget: {
+    dailyLimit: number;
+    estimatedCost: number;
+  };
+  protein: {
+    targetGrams: number;
+    achievedGrams: number;
+    gapGrams: number;
+  };
+  foods: OptimizedFood[];
+  meals?: PlannedMeal[];
+  groceryList?: GroceryEntry[];
+  reason?: string;
+  warnings?: string[];
+  mealTimings?: DailyMealTiming[];
+  sevenDayMealPlan?: DayMealPlan[];
+  budgetManagement?: BudgetManagementGuide;
+}
+
+export interface WorkoutPlanData {
+  gender?: 'male' | 'female' | string;
+  environment: TrainingEnvironment;
+  durationMinutes: number;
+  weeklyFrequencyDays: number;
+  experienceLevel: string;
+  goal: string;
+  days: WorkoutDay[];
+}
+
+export interface NutritionPlanData {
+  bmr: number;
+  tdee: number;
+  goal: string;
+  calorieTarget: number;
+  proteinTargetGrams: number;
+  activityLevel: string;
+}
+
 export interface GeneratedPlan {
   userProfile: OnboardingData;
-  workoutDays: WorkoutDay[];
-  currentEnvironment: TrainingEnvironment;
-  meals: Meal[];
-  groceryItems: GroceryItem[];
-  supplementRecommendations: SupplementRecommendation[];
-  recoveryTips: RecoveryGuidance[];
-  dailySchedule: ScheduleEvent[];
-  isLateTiredModeActive: boolean;
+  nutrition: NutritionPlanData;
+  diet: DietPlanData;
+  workout: WorkoutPlanData;
 }
+
 
 // AI Assistant Types
 export interface ChatMessageAction {

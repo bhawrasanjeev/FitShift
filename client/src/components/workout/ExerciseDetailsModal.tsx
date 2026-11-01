@@ -15,18 +15,25 @@ import {
 
 export interface ExerciseDetailsModalProps {
   exercise: Exercise | null;
+  exerciseIndex?: number | null;
   isOpen: boolean;
   onClose: () => void;
-  onSelectAlternative: (currentId: string) => void;
+  onSelectAlternative: (currentId: string, exerciseIndex?: number) => void;
 }
 
 export const ExerciseDetailsModal: React.FC<ExerciseDetailsModalProps> = ({
   exercise,
+  exerciseIndex,
   isOpen,
   onClose,
   onSelectAlternative,
 }) => {
   const [imageFailed, setImageFailed] = useState(false);
+
+  // Reset image status whenever active exercise or its thumbnail changes
+  React.useEffect(() => {
+    setImageFailed(false);
+  }, [exercise?.id, exercise?.thumbnailUrl]);
 
   if (!exercise) return null;
 
@@ -43,7 +50,7 @@ export const ExerciseDetailsModal: React.FC<ExerciseDetailsModalProps> = ({
             variant="secondary"
             size="sm"
             onClick={() => {
-              onSelectAlternative(exercise.id);
+              onSelectAlternative(exercise.id, exerciseIndex !== null && exerciseIndex !== undefined ? exerciseIndex : undefined);
               onClose();
             }}
             leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
@@ -57,10 +64,11 @@ export const ExerciseDetailsModal: React.FC<ExerciseDetailsModalProps> = ({
       }
     >
       <div className="space-y-6">
-        {/* Media Demo Box */}
+        {/* Exercise Media Display */}
         <div className="relative w-full h-56 rounded-xl overflow-hidden bg-zinc-900 border border-zinc-200 flex items-center justify-center">
           {!imageFailed && exercise.thumbnailUrl ? (
             <img
+              key={exercise.thumbnailUrl || exercise.id}
               src={exercise.thumbnailUrl}
               alt={exercise.name}
               onError={() => setImageFailed(true)}
@@ -70,7 +78,7 @@ export const ExerciseDetailsModal: React.FC<ExerciseDetailsModalProps> = ({
             <div className="flex flex-col items-center justify-center text-zinc-400 p-4 text-center">
               <ImageOff className="w-8 h-8 mb-2 opacity-50" />
               <p className="text-xs font-semibold text-zinc-300">
-                Visual Exercise Demonstration Guide
+                Visual Exercise Form Guide
               </p>
               <p className="text-[11px] text-zinc-500 max-w-xs mt-1">
                 Maintain neutral cervical spine and fluid cadence through both eccentric and concentric phases.

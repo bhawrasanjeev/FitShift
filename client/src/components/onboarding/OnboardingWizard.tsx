@@ -24,7 +24,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 }) => {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [formData, setFormData] = useState<OnboardingData>(initialData);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [step1Error, setStep1Error] = useState<string | null>(null);
 
   const totalSteps = 7;
 
@@ -68,7 +68,22 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
 
   const currentMeta = stepMeta[currentStep - 1];
 
+  const isStep1Valid =
+    formData.personal.age >= 14 &&
+    formData.personal.age <= 100 &&
+    formData.personal.heightCm >= 100 &&
+    formData.personal.heightCm <= 250 &&
+    formData.personal.weightKg >= 30 &&
+    formData.personal.weightKg <= 300;
+
   const handleNext = () => {
+    if (currentStep === 1) {
+      if (!isStep1Valid) {
+        setStep1Error('Please enter a valid age (14–100), height (100–250 cm), and current weight (30–300 kg).');
+        return;
+      }
+      setStep1Error(null);
+    }
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -76,6 +91,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   };
 
   const handleBack = () => {
+    setStep1Error(null);
     if (currentStep > 1) {
       setCurrentStep((prev) => prev - 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -85,12 +101,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
   };
 
   const handleGenerate = () => {
-    setIsGenerating(true);
-    // Smooth transition simulation
-    setTimeout(() => {
-      setIsGenerating(false);
-      onComplete(formData);
-    }, 650);
+    onComplete(formData);
   };
 
   return (
@@ -122,15 +133,23 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
       {/* Dynamic Step Content */}
       <div className="bg-white rounded-2xl border border-zinc-200/90 p-6 sm:p-8 shadow-xs mb-8">
         {currentStep === 1 && (
-          <PersonalBasicsStep
-            data={formData.personal}
-            onChange={(updated) =>
-              setFormData((prev) => ({
-                ...prev,
-                personal: { ...prev.personal, ...updated },
-              }))
-            }
-          />
+          <div className="space-y-4">
+            <PersonalBasicsStep
+              data={formData.personal}
+              onChange={(updated) => {
+                setStep1Error(null);
+                setFormData((prev) => ({
+                  ...prev,
+                  personal: { ...prev.personal, ...updated },
+                }));
+              }}
+            />
+            {step1Error && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-medium">
+                {step1Error}
+              </div>
+            )}
+          </div>
         )}
 
         {currentStep === 2 && (
@@ -198,7 +217,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({
             data={formData}
             onEditStep={(step) => setCurrentStep(step)}
             onGeneratePlan={handleGenerate}
-            isGenerating={isGenerating}
+            isGenerating={false}
           />
         )}
       </div>

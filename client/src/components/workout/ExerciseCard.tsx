@@ -6,16 +6,23 @@ import { Dumbbell, Clock, RefreshCw, Eye, ImageOff } from 'lucide-react';
 
 export interface ExerciseCardProps {
   exercise: Exercise;
+  exerciseIndex?: number;
   onViewDetails: (exercise: Exercise) => void;
-  onSwapAlternative: (exerciseId: string) => void;
+  onSwapAlternative: (exerciseId: string, exerciseIndex?: number) => void;
 }
 
 export const ExerciseCard: React.FC<ExerciseCardProps> = ({
   exercise,
+  exerciseIndex,
   onViewDetails,
   onSwapAlternative,
 }) => {
   const [imageError, setImageError] = useState(false);
+
+  // Reset image error whenever exercise or thumbnail changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [exercise.id, exercise.thumbnailUrl]);
 
   return (
     <div className="bg-white rounded-2xl border border-zinc-200/90 p-5 shadow-xs hover:border-zinc-300 transition-all flex flex-col sm:flex-row gap-5 items-start sm:items-center justify-between">
@@ -24,6 +31,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
         <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-xl overflow-hidden bg-zinc-100 border border-zinc-200 shrink-0 flex items-center justify-center">
           {!imageError && exercise.thumbnailUrl ? (
             <img
+              key={exercise.thumbnailUrl || exercise.id}
               src={exercise.thumbnailUrl}
               alt={exercise.name}
               onError={() => setImageError(true)}
@@ -33,7 +41,7 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           ) : (
             <div className="flex flex-col items-center justify-center text-zinc-400 p-2 text-center">
               <ImageOff className="w-5 h-5 mb-1" />
-              <span className="text-[9px] font-medium uppercase tracking-wider">Demo</span>
+              <span className="text-[9px] font-medium uppercase tracking-wider">No Image</span>
             </div>
           )}
           <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-black/70 text-white backdrop-blur-xs">
@@ -78,13 +86,13 @@ export const ExerciseCard: React.FC<ExerciseCardProps> = ({
           leftIcon={<Eye className="w-3.5 h-3.5" />}
           className="text-xs"
         >
-          View Demo
+          Form Guide
         </Button>
 
         <Button
           variant="secondary"
           size="sm"
-          onClick={() => onSwapAlternative(exercise.id)}
+          onClick={() => onSwapAlternative(exercise.id, exerciseIndex)}
           leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           className="text-xs"
           title={`Switch to ${exercise.alternative.name}`}
