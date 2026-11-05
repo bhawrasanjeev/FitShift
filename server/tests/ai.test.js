@@ -57,6 +57,17 @@ describe('AI Assistant Backend Route & Configuration Tests', () => {
     assert.ok(res.body.error.message.includes('Query'));
   });
 
+  test('POST /api/ai/chat should return HTTP 400 when query exceeds 1000 characters', async () => {
+    const longQuery = 'a'.repeat(1001);
+    const res = await request(app)
+      .post('/api/ai/chat')
+      .send({ query: longQuery })
+      .expect(400);
+
+    assert.equal(res.body.success, false);
+    assert.ok(res.body.error.message.includes('1000 characters'));
+  });
+
   test('GET /api/ai/status should detect GEMINI_API_KEY when configured without leaking it', async () => {
     process.env.GEMINI_API_KEY = 'test-gemini-secret-key-12345';
 

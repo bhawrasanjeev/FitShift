@@ -163,8 +163,20 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
     return elements;
   };
 
-  const formatInline = (text: string) => {
-    return text
+  const escapeHtml = (unsafe: string): string => {
+    return unsafe
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
+
+  const formatInline = (text: string): string => {
+    // 1. Escape all raw HTML to prevent Cross-Site Scripting (XSS)
+    const escaped = escapeHtml(text);
+    // 2. Safe markdown inline bold and italic conversions
+    return escaped
       .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-zinc-900">$1</strong>')
       .replace(/\*(.*?)\*/g, '<em class="italic text-zinc-600">$1</em>');
   };

@@ -100,7 +100,8 @@ ${context ? `Active User Context: Goal: ${context.goal || 'General'}, Environmen
     let lastError = null;
 
     for (const model of candidateModels) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      // Securely pass API key via x-goog-api-key header instead of query parameter to prevent secret logging
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
       const payload = {
         systemInstruction: {
@@ -121,7 +122,10 @@ ${context ? `Active User Context: Goal: ${context.goal || 'General'}, Environmen
       try {
         const res = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'x-goog-api-key': apiKey
+          },
           body: JSON.stringify(payload)
         });
 

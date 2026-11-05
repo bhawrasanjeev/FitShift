@@ -5,6 +5,7 @@ import config from './config/env.js';
 import apiRoutes from './routes/index.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
 import errorHandler from './middleware/errorHandler.js';
+import { generalApiRateLimiter } from './middleware/rateLimiter.js';
 
 const app = express();
 
@@ -17,8 +18,11 @@ app.use(cors({
   credentials: true
 }));
 
-// Parse incoming JSON requests
-app.use(express.json());
+// Parse incoming JSON requests with explicit size limit to prevent payload DoS
+app.use(express.json({ limit: '100kb' }));
+
+// Global rate limiting on API endpoints
+app.use('/api', generalApiRateLimiter);
 
 // Register API routes
 app.use('/api', apiRoutes);
