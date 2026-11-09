@@ -112,18 +112,22 @@ export interface DatasetStatusResponse {
   };
 }
 
-// Fallback base URLs if proxy is unavailable
+// Backend URL: defaults to production backend on Render, or can be overridden via VITE_API_URL
+const PRODUCTION_BACKEND_URL = 'https://fitshift-1mgj.onrender.com';
 const metaEnv = (import.meta as unknown as { env?: Record<string, string | undefined> }).env;
-const CONFIGURED_API_BASE = metaEnv?.VITE_API_URL ? metaEnv.VITE_API_URL.replace(/\/$/, '') : '';
+const rawEnvUrl = metaEnv?.VITE_API_URL?.trim();
+const CONFIGURED_API_BASE = (rawEnvUrl && rawEnvUrl.length > 0)
+  ? rawEnvUrl.replace(/\/$/, '')
+  : PRODUCTION_BACKEND_URL;
 
 async function fetchFromApi(endpoint: string, options?: RequestInit): Promise<Response> {
   const url = `${CONFIGURED_API_BASE}${endpoint}`;
   try {
     return await fetch(url, options);
   } catch (initialErr) {
-    // If running in development without Vite proxy, fallback to direct port 5001
-    if (!CONFIGURED_API_BASE && window.location.hostname === 'localhost') {
-      const fallbackUrl = `http://localhost:5001${endpoint}`;
+    // If request failed and we didn't target the production backend directly, try the production backend
+    if (url !== `${PRODUCTION_BACKEND_URL}${endpoint}`) {
+      const fallbackUrl = `${PRODUCTION_BACKEND_URL}${endpoint}`;
       return await fetch(fallbackUrl, options);
     }
     throw initialErr;
