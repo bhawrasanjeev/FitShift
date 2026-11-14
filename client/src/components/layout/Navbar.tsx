@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dumbbell, ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '../ui/Button';
 
 export interface NavbarProps {
@@ -35,9 +35,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           onClick={() => onNavigate('landing')}
           className="flex items-center gap-2.5 text-left group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 rounded-lg p-1"
         >
-          <div className="w-9 h-9 rounded-xl bg-emerald-700 flex items-center justify-center text-white shadow-xs group-hover:bg-emerald-800 transition-colors">
-            <Dumbbell className="w-5 h-5 stroke-[2.2]" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="FitShift Logo"
+            className="w-9 h-9 rounded-xl object-contain shadow-xs group-hover:scale-105 transition-transform"
+          />
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-lg tracking-tight text-zinc-900">

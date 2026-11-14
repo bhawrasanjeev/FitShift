@@ -12,7 +12,7 @@ FitShift is a React-based fitness and nutrition planning web application crafted
 - **Color Tokens:**
   - Background: Warm off-white (`#FAFAFA`, `#F4F4F6`, `#FFFFFF`)
   - Typography: Charcoal / near-black (`#111827`, `#0F172A`)
-  - Accent: Forest & emerald green (`#15803D`, `#166534`, `#047857`)
+  - Accent: Logo athletic green (`#29AF33`, `#22982B`, `#1A7D23`)
   - Borders: Subtle 1px lines (`#E5E7EB`)
 - **Philosophy:**
   - **Planning, Not Tracking:** Zero calorie-burn counters, streak anxiety, or wearable integration overhead.
